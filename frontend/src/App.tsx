@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { VideoPlayer } from './components/VideoPlayer'
 import { CommandCenter } from './components/CommandCenter'
 import { DebugConsole } from './components/DebugConsole'
+import { AntigravityBridge } from './components/AntigravityBridge'
 import './App.css'
 
 function App() {
   const [streamUrl] = useState('http://localhost:8000/video_feed')
+  const [lastPrompt, setLastPrompt] = useState('')
 
   const handlePromptUpdate = async (prompt: string) => {
     try {
@@ -19,6 +21,7 @@ function App() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      setLastPrompt(prompt); // Track valid prompt
       return true; // Indicate success
     } catch (error) {
       console.error('Failed to update prompt:', error);
@@ -46,6 +49,11 @@ function App() {
         <main>
           <VideoPlayer streamUrl={streamUrl} />
           <CommandCenter onPromptUpdate={handlePromptUpdate} />
+          <AntigravityBridge
+            prompt={lastPrompt}
+            streamUrl={streamUrl}
+            onPromptInject={handlePromptUpdate}
+          />
         </main>
       </div>
     </div>
