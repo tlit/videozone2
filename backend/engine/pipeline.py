@@ -67,6 +67,8 @@ class AIPipeline:
             
             self.loading_status = "MOVING TO GPU..."
             self.pipe.to(self.device)
+            self.pipe.unet.to(self.device)
+            self.pipe.vae.to(self.device)
             # self.pipe.enable_model_cpu_offload() # Caused input device mismatch
             
             self.loading_status = "OPTIMIZING MEMORY..."

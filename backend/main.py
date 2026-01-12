@@ -30,6 +30,17 @@ def update_prompt(prompt: str):
     engine.update_prompt(prompt)
     return {"status": "Prompt updated", "prompt": prompt}
 
+from pydantic import BaseModel
+
+class ParamsRequest(BaseModel):
+    strength: float
+    guidance_scale: float
+
+@app.post("/update_params")
+def update_params(params: ParamsRequest):
+    engine.update_params(params.strength, params.guidance_scale)
+    return {"status": "Params updated", "strength": params.strength, "guidance_scale": params.guidance_scale}
+
 @app.get("/debug/status")
 def debug_status():
     return engine.get_status()

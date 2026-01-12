@@ -21,6 +21,7 @@ export interface AntigravityState {
 export interface AntigravityActions {
     injectPrompt: (prompt: string) => Promise<boolean>;
     pingBackend: () => Promise<boolean>;
+    updateParams: (params: { strength: number; guidance: number }) => Promise<boolean>;
 }
 
 interface AntigravityBridgeProps {
@@ -34,7 +35,7 @@ export const AntigravityBridge: React.FC<AntigravityBridgeProps> = ({
     streamUrl,
     onPromptInject
 }) => {
-    
+
     useEffect(() => {
         // Mount the bridge
         window.__ANTIGRAVITY__ = {
@@ -55,6 +56,19 @@ export const AntigravityBridge: React.FC<AntigravityBridgeProps> = ({
                         const res = await fetch('http://localhost:8000/debug/status');
                         return res.ok;
                     } catch (e) {
+                        return false;
+                    }
+                },
+                updateParams: async (params: { strength: number; guidance: number }) => {
+                    try {
+                        const res = await fetch('http://localhost:8000/update_params', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ strength: params.strength, guidance_scale: params.guidance })
+                        });
+                        return res.ok;
+                    } catch (e) {
+                        console.error("Failed to update params:", e);
                         return false;
                     }
                 }

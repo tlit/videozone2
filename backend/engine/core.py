@@ -11,6 +11,8 @@ class HallucinationEngine:
         # 16:9 Aspect Ratio (YouTube Optimal)
         self.width = 912
         self.height = 512
+        self.strength = 0.3
+        self.guidance_scale = 8.0
         self.frame = self._initial_noise()
         self.running = False
         self.lock = asyncio.Lock()
@@ -43,6 +45,11 @@ class HallucinationEngine:
         print(f"Update Prompt: {prompt}")
         self.prompt = prompt
 
+    def update_params(self, strength: float, guidance_scale: float):
+        print(f"Update Params: strength={strength}, guidance={guidance_scale}")
+        self.strength = strength
+        self.guidance_scale = guidance_scale
+
     async def _loop(self):
         print("Engine Loop Started")
         self.status = "RUNNING"
@@ -63,7 +70,9 @@ class HallucinationEngine:
                    next_frame = await asyncio.to_thread(
                        self.ai.generate, 
                        prompt=self.prompt, 
-                       image=zoomed
+                       image=zoomed,
+                       strength=self.strength,
+                       guidance_scale=self.guidance_scale
                    )
                    
                    self.frame = next_frame
@@ -90,5 +99,7 @@ class HallucinationEngine:
             "last_gen_time_ms": getattr(self, "last_gen_time", 0),
             "model_loaded": self.ai.pipe is not None,
             "loading_state": getattr(self.ai, "loading_status", "UNKNOWN"),
-            "device": str(self.ai.device)
+            "device": str(self.ai.device),
+            "strength": self.strength,
+            "guidance_scale": self.guidance_scale
         }
