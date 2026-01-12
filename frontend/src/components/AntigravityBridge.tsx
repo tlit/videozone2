@@ -16,6 +16,7 @@ export interface AntigravityState {
     lastPrompt: string;
     streamUrl: string;
     backendConnected: boolean;
+    spark_active?: boolean;
 }
 
 export interface AntigravityActions {

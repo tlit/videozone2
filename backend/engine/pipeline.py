@@ -66,9 +66,16 @@ class AIPipeline:
             self.pipe.scheduler = LCMScheduler.from_config(self.pipe.scheduler.config)
             
             self.loading_status = "MOVING TO GPU..."
+            self.loading_status = "MOVING TO GPU..."
             self.pipe.to(self.device)
-            self.pipe.unet.to(self.device)
-            self.pipe.vae.to(self.device)
+            
+            # Explicitly ensure all sub-models are on the correct device
+            if hasattr(self.pipe, "text_encoder") and self.pipe.text_encoder:
+                self.pipe.text_encoder.to(self.device)
+            if hasattr(self.pipe, "unet") and self.pipe.unet:
+                self.pipe.unet.to(self.device)
+            if hasattr(self.pipe, "vae") and self.pipe.vae:
+                self.pipe.vae.to(self.device)
             # self.pipe.enable_model_cpu_offload() # Caused input device mismatch
             
             self.loading_status = "OPTIMIZING MEMORY..."
