@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+diffusers
+transformers
+accelerate
+torch --index-url https://download.pytorch.org/whl/cu118
+opencv-python
+pillow
+numpy
